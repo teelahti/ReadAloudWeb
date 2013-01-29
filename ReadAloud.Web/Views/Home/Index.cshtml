@@ -1,0 +1,35 @@
+﻿@using System.Web.Optimization
+@model string
+<article id="content">
+    <form id="dummy">
+        <input  
+            type="text" 
+            id="inputText"
+            pattern="[\w\s\!\?,.ÄäÖöÅå]*"
+            title="Kirjoita luettava teksti suomeksi."
+            maxlength="50"   
+            required 
+            autofocus
+            value ="@Model" />
+        <div id="progressBar"><span id="progress"></span></div>
+        <div id="buttons">
+            <button type="submit" class="button red">
+                Lue!</button>
+            <button type="reset" id="reset" class="button">
+                Tyhjennä</button>
+        </div>
+    </form>
+
+    <ul id="recent">
+    </ul>
+
+    <audio id="audio" data-api-url="@Url.Action("Narrate", "Api")">
+        Selaimesi ei tue <code>audio</code>-elementtiä. 
+    </audio>
+
+</article>
+
+@section Scripts
+{
+    @Scripts.Render("~/bundles/narrate")
+}
