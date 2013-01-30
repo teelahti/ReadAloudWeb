@@ -1,12 +1,24 @@
 ﻿(function () {
-    var input = $("#inputText"),
-        audioWrapper = $("#audio"),
-        audio = audioWrapper.get(0),
-        form = $("#dummy"),
-        reset = $("#reset"),
-        urlBase = audioWrapper.data("api-url") + "?text=",
-        progress = document.getElementById("progress"),
-        buttons = $("button");
+    var id = function (s) { return document.getElementById(s); },
+        input = id("inputText"),
+        audio = id("audio"),
+        form = id("dummy"),
+        
+        // dataset is not supported in IE, using getAttribute instead
+        urlBase = audio.getAttribute("data-api-url") + "?text=",
+        progress = id("progress"),
+        buttons = document.querySelectorAll("button");
+
+    function focusInput() {
+        // Focus input field if browser lost it when "sending" the form
+        if (input !== document.activeElement && input.focus) {
+            try {
+                input.focus();
+            } catch (e) {
+                console.log("Focus not supported", e);
+            }
+        }
+    }
 
     function narrate(text) {
         var a = audio;
@@ -22,12 +34,14 @@
     }
     
     function narrateHandler(e) {
-        var value = $.trim(input.val());
-        e.preventDefault();
-        
-        pubsubz.publish("narrate/new", value);
+        var value = input.value.trim();
 
-        narrate(value);
+        e.preventDefault();
+
+        if (value) {    
+            pubsubz.publish("narrate/new", value);
+            narrate(value);
+        }
     }
 
     function updateProgress() {
@@ -39,22 +53,35 @@
         progress.style.width = value + "%";
     }
 
+    function toggleElementsWhileNarrating(disabled) {
+        input.disabled = disabled;
+        for (var i = 0; i < buttons.length; ++i) {
+            buttons[i].disabled = disabled;
+        }
+    }
+
     function onAudioStart() {
-        // Disable input field and buttons
-        buttons.add(input).attr("disabled", "disabled");
+        toggleElementsWhileNarrating(true);
     }
 
     function onAudioEnd() {
         // Enable buttons
-        buttons.add(input).removeAttr("disabled");
+        toggleElementsWhileNarrating(false);
 
         // Hide progress bar after delay
         setTimeout(function () {
             progress.style.width = "0%";
         }, 500);
-        
-        // Focus input field if browser lost it when "sending" the form
-        input.focus();
+
+        focusInput();
+    }
+    
+    function onFormReset(e) {
+        // Act on keyboard ESC and on generic click event
+        if ((!e.keyCode) || e.keyCode == 27) {
+            input.value = "";
+            focusInput();
+        }
     }
 
     // Whenever audio is playing display progress bar 
@@ -64,22 +91,21 @@
     audio.addEventListener("play", onAudioStart, false);
     audio.addEventListener("ended", onAudioEnd, false);
 
-    form.submit(narrateHandler);
+    form.addEventListener("submit", narrateHandler, false);
 
-    // TODO: Bind esc to reset (if possible)
-    reset.click(function () {
-        input.focus();
-    });
+    // Clear form on ESC key
+    window.addEventListener("keyup", onFormReset, false);
+    form.addEventListener("reset", onFormReset, false);
     
     // On first load read text aloud if there is any (comes from URI)
-    if (input.val()) {
-        narrate(input.val());
+    if (input.value) {
+        narrate(input.value);
     }
     
     // Bind navigation handlers
     function narrateGiven(topic, text, publish) {
         if (text) {
-            input.val(text);
+            input.value = text;
             narrate(text);
             
             if(publish) {

@@ -6,7 +6,7 @@
     }
 
     function pushHistory(topic, data) {
-        if (!supportsHistory) {
+        if (!supportsHistory()) {
             console.log("History not supported, skipping", data);
             return;
         }

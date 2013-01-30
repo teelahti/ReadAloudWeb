@@ -117,6 +117,7 @@
     <Content Include="Content\button.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\polyfills.js" />
     <Content Include="Scripts\Narrate.track.js" />
     <Content Include="Scripts\Narrate.history.js" />
     <Content Include="Scripts\Narrate.js" />

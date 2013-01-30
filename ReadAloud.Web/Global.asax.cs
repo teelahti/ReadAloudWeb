@@ -30,6 +30,7 @@
         private static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/narrate")
+                .Include("~/Scripts/polyfills.js")
                 .Include("~/Scripts/pubsubz.js")
                 .Include("~/Scripts/Narrate.js")
                 .Include("~/Scripts/Narrate.history.js")

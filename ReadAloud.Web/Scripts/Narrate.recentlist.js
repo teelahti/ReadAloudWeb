@@ -1,39 +1,44 @@
 ﻿(function () {
-    var recent = $("#recent");
+    var recent = document.getElementById("recent");
     
     function add(topic, data) {
-        var value = $.trim(data),
+        var value = data.trim().toLowerCase(),
             found = false;
 
         // check whether this text already is in recent texts
-        recent.find("li").each(function () {
-            if ($(this).text() === value) {
+        for (var i = 0; i < recent.children.length; ++i) {
+            if (recent.children[i].innerText.toLowerCase() === value) {
                 found = true;
             }
-        });
-
+        }
+        
         if (!found) {
-            if (recent.children().length > 4) {
-                recent.find("li:last-child").remove();
+            if (recent.children.length > 4) {
+                recent.removeChild(recent.children[4]);
             }
 
-            recent.prepend($("<li>").html(value));
+            var li = document.createElement("li");
+            li.innerText = value;
+            
+            recent.insertBefore(li, recent.firstChild);
         }
     }
     
     function remove() {
-        recent.find("li:first").remove();
+        if (recent.children.length) {
+            recent.removeChild(recent.firstChild);
+        }
     }
     
     function onRecentClick(e) {
-        var recentValue = $.trim($(e.target).html());
+        var recentValue = e.target.innerText;
 
         if (recentValue) {
             pubsubz.publish("recent/selected", recentValue);
         }
     }
 
-    recent.on("click", onRecentClick);
+    recent.addEventListener("click", onRecentClick, false);
     
     pubsubz.subscribe("narrate/new", add);
     pubsubz.subscribe("navigation/back", remove);
