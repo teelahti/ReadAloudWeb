@@ -112,6 +112,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RemoveHttpHeadersModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\button.css" />
@@ -122,7 +123,9 @@
     <Content Include="Scripts\Narrate.history.js" />
     <Content Include="Scripts\Narrate.js" />
     <Content Include="Scripts\pubsubz.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
