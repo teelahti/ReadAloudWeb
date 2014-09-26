@@ -77,8 +77,8 @@
     }
     
     function onFormReset(e) {
-        // Act on keyboard ESC and on generic click event
-        if ((!e.keyCode) || e.keyCode == 27) {
+        // Act on keyboard ESC and on generic form reset event
+        if (e.type === "reset" || e.keyCode == 27) {
             input.value = "";
             focusInput();
         }
